@@ -158,6 +158,20 @@ class PinterestDownloader:
 
             filepath = os.path.join(self.download_dir, filename)
 
+            # Check if file already exists and is valid
+            if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
+                # File already exists, skip download
+                successful += 1
+                total_size += os.path.getsize(filepath)
+
+                # Still call progress callback
+                if progress_callback:
+                    should_continue = progress_callback(idx, len(image_urls), filename)
+                    if should_continue is False:
+                        break
+
+                continue
+
             # Call progress callback and check for cancellation
             if progress_callback:
                 should_continue = progress_callback(idx, len(image_urls), filename)
